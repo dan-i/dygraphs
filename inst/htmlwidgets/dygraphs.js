@@ -687,13 +687,21 @@ HTMLWidgets.widget({
               
 			      // fire input change
 			      if (Shiny.onInputChange) { // may note be ready yet in case of static render
-              Shiny.onInputChange(el.id + "_click", {
-        				x: isDate ? new Date(x) : x,
-        				x_closest_point: isDate ? new Date(points[0].xval) : points[0].xval,
-        				y_closest_point: points[0].yval,
-        				series_name: points[0].name,
-        				'.nonce': Math.random() // Force reactivity if click hasn't changed
-  			      }); 
+
+			      	var canvasy=e.clientY-e.srcElement.getBoundingClientRect().top
+			        var sitem;
+                        	for(sitem = 0; sitem < points.length; sitem++) {
+                            		if(points[sitem].canvasy>=canvasy) break;
+                        	}
+                        	if(sitem>0) {
+              				Shiny.onInputChange(el.id + "_click", {
+        					x: isDate ? new Date(x) : x,
+        					x_closest_point: isDate ? new Date(points[sitem-1].xval) : points[sitem-1].xval,
+        					y_closest_point: points[sitem-1].yval,
+        					series_name: points[sitem-1].name,
+        					'.nonce': Math.random() // Force reactivity if click hasn't changed
+  			      		});
+				}
 			      }
           }
         });
